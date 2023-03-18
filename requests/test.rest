@@ -1,0 +1,34 @@
+@url = http://localhost:3000
+
+### Main
+GET {{url}}/test
+
+### Get all tests
+Get {{url}}/test/get
+
+### Get One
+# @prompt id
+GET {{url}}/test/get/{{id}}
+
+### Create Test
+# @prompt tittle
+POST {{url}}/test/post
+Content-Type: application/json
+
+{
+    "title": "{{tittle}}"
+}
+
+### Edit Test
+# @prompt id
+# @prompt title
+PUT {{url}}/test/edit/{{id}}
+Content-Type: application/json
+
+{
+    "title": "{{title}}"
+}
+
+### Delete Test
+# @prompt id
+DELETE {{url}}/test/delete/{{id}}

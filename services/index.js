@@ -1,5 +1,5 @@
-function hello(name,port,url) {
-    console.log(`Server -${name}- on port ${port} - ${url}`);
+function hello(name,port,url,mode) {
+    console.log(`Server -${name}- mode: -${mode}- | on port ${port} - ${url}`);
 }
 module.exports = {
     hello
