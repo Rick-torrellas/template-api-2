@@ -1,5 +1,5 @@
 // Le puse text, por que si no jest lo ejecuta
-const {getApi,postApi} = require('./basic.js');
+const {getApi,postApi, deleteApi} = require('./basic.js');
 
 const initialTest = [
     {
@@ -35,6 +35,9 @@ const postTest = async () => {
 const postTestEmpty = async () => {
     return await postApi(postTestPath,newTestEmpty);
 }
+const deleteNotExistingTest = async () => {
+    return await deleteApi('/test/delete','1234')
+}
 module.exports = {
     initialTest,
     getTitlefromTests,
@@ -42,5 +45,6 @@ module.exports = {
     getTest,
     newTest,
     postTest,
-    postTestEmpty
+    postTestEmpty,
+    deleteNotExistingTest
 }

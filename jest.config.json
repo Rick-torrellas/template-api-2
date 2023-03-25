@@ -1,0 +1,8 @@
+{
+    "testPathIgnorePatterns": [
+        "routes",
+        "models",
+        "controllers"
+      ],
+      "verbose": true
+}
