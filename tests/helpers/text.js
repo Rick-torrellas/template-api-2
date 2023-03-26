@@ -1,6 +1,8 @@
 // Le puse text, por que si no jest lo ejecuta
-const {getApi,postApi, deleteApi} = require('./basic.js');
 
+/**
+ * La base de datos inicial de Test.
+ */
 const initialTest = [
     {
         title: "Primer Test"
@@ -9,42 +11,20 @@ const initialTest = [
         title: "Segundo Test"
     }
 ];
+
+/**
+ * El test usado para testear las peticiones post.
+ */
 const newTest = {
     title: 'Tercer Test'
 }
+/**
+ * Un test vacio usado para verificar que pasa, cuando intentas crear un test vacio.
+ */
 const newTestEmpty = {}
-// La ruta para pedir los test
-const getTestsPath = '/test/get';
-const getTestPath = '/test';
-const postTestPath = "/test/post";
 
-const getTest = async () => {
-    return await getApi(getTestPath);
-}
-// Para obtener los tests de la api
-const getTests = async () => {
-    return await getApi(getTestsPath);
-}
-const getTitlefromTests = async () => {
-    const res = await getTests();
-    return res.body.map(test => test.title);
-}
-const postTest = async () => {
-    return await postApi(postTestPath,newTest)
-}
-const postTestEmpty = async () => {
-    return await postApi(postTestPath,newTestEmpty);
-}
-const deleteNotExistingTest = async () => {
-    return await deleteApi('/test/delete','1234')
-}
 module.exports = {
     initialTest,
-    getTitlefromTests,
-    getTests,
-    getTest,
     newTest,
-    postTest,
-    postTestEmpty,
-    deleteNotExistingTest
+    newTestEmpty
 }

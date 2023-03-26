@@ -1,53 +1,113 @@
-const {app,server} = require('./../../index.js');
-const request = require('supertest');
+const { cwd } = require("node:process");
+//TODO: crear una funcion que busque el archivo index.js, con cwd() o en src y en dis, si lo encuentra en dist, entonces usara este. NOTA: se puede usar fs-extra
+//TODO: tambien se me ocurre que este modulo puede tener un archivo de configuracion, tanto puede ser un archivo, como incluirse dentro del paqueete.json, que contenga una propiedad, que tenga la ubicacion del index.js.
+const index = `${cwd()}/index.js`;
+const { app, server } = require(index);
+const request = require("supertest");
 const api = request(app);
 
+const statusCodes = [200, 201, 204, 304, 400, 401, 403, 404, 500];
+
+/**
+ * Te permite mandar una peticion get a la API
+ * @param {*} path La ruta para la peticion
+ */
 const getApi = async (path) => {
-    return await api.get(path);
-}
+  return await api.get(path);
+};
 
-const deleteApi = async (path,element) => {
-    return await api.delete(`${path}/${element}`);
-}
+/**
+ * Te permite mandar un peticion delete a la API
+ * @param {*} path LA ruta a la peticion
+ * @param {*} element El elemento que quieres eliminar. Por lo general se manda un id.
+ */
+const deleteApi = async (path, element) => {
+  return await api.delete(`${path}/${element}`);
+};
 
+/**
+ * Te permite mandar una peticion put a la API
+ * @param {*} path
+ * @returns
+ */
 const putApi = async (path) => {
-    return await api.put(path)
-}
-const postApi = async (path,content) => {
-    return await api.post(path).send(content);
-}
+  return await api.put(path);
+};
+
+/**
+ * Te permite mandar peticiones post a la api
+ * @param {string} path La ruta de la peticion
+ * @param {*} content El contenido de la peticion.
+ */
+const postApi = async (path, content) => {
+  return await api.post(path).send(content);
+};
+
 /**
  * Verfica el status code de la respuesta sea apropiado, tambien puede verificar que el status code no sea otro.
- * @param noCode Es un array con los status code que no quieres recibir.
- * @param positiveCode Es el status code que quieres comprobar
+ * @param resStatus La propiedad status devuelta por la respuesta. `res.status`
+ * @param statusCode El status code que esperas recibir.
  */
-const checkStatusCode = ({res,positiveCode,noCode}) => {
-    expect(res.status).toBe(positiveCode);
-    if (noCode) {
-       checkNoStatusCode({res,noCode});
+const checkStatusCode = (resStatus, statusCode) => {
+  for (const prop in statusCodes) {
+    const value = statusCodes[prop];
+    if (value !== statusCode) {
+      expect(resStatus).not.toBe(value);
     }
-}
+    expect(resStatus).toBe(statusCode);
+  }
+};
+
+//TODO: crear funciones para testiar el mismo tipo de endpoint, ejemplo: get, getOne, post, edit, delete, query.
+
 /**
- * Verifica los status code que no se espera recibir.
+ * Verifica el formato de la respuesta, si es JSON o HTML.
+ * @param header El header de la respuesta `res.header`
+ * @param format El formato esperado de la respuesta, posibles valores `json|html`
  */
-const checkNoStatusCode = ({res,noCode}) => {
-    for ( const prop in noCode) {
-        const value = noCode[prop];
-        expect(res.status).not.toBe(value);
+const checkFormatRes = (header,format) => {
+//TODO: verificar si format es json o html, en caso de que no tirar un error.    
+  if (format === "json") {
+      expect(header["content-type"]).toMatch(/application\/json/);
+      return;
     }
+      expect(header["content-type"]).toMatch(/text\/html/);
+};
+
+//TODO: crea una funcion que veridique si existe un valor en un grupo de valores y crear uno que espero que no tenga
+//expect(titles).toContain(initialTest[1].title);
+
+
+/**
+ * Te permite comparar dos valores, usa `expect(prop1).toBe(prop2);`
+ * @param {*} firstProp El primer valor a comparar
+ * @param {*} secondProp El segundo valor a comparar
+ */
+const compareProp = (firstProp, secondProp) => {
+  expect(firstProp).toBe(secondProp);
+};
+
+/**
+ * Verifica la longitud de un objeto. usa `expect(object).toHaveLength(length);`
+ * @param {*} object El objeto que quieres comparar su length, por lo general se usa `res.body`.
+ * @param {*} length La length que deceas comprar. Por lo general se usa la longitud de la base de datos.
+ */
+const checkLength = (object,length) => {
+    expect(object).toHaveLength(length);
 }
-// Cuando esperas recibir el status 200.
-const status200 = {
-    positiveCode: 200,
-    noCode: [201,204,304,400,401,403,404,500]
-}
+
+//TODO: una funcion que compare el length de la respuesta, con el de la base de datos y le sume 1, este es especial cuando se hace un post y crear una igual pero restando para los deletes.
+// expect(res.body).toHaveLength(initialTest.length + 1);
+
 module.exports = {
-    api,
-    server,
-    getApi,
-    postApi,
-    putApi,
-    deleteApi,
-    checkStatusCode,
-    status200
-}
+  api,
+  server,
+  getApi,
+  postApi,
+  putApi,
+  deleteApi,
+  checkStatusCode,
+  compareProp,
+  checkFormatRes,
+  checkLength
+};
