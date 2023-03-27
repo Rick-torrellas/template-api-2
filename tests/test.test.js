@@ -1,21 +1,20 @@
 const mongoose = require("mongoose");
 const { describe } = require("node:test");
 const Test = require("./../models/Test.js");
-const {
-  initialTest,
-  getTitlefromTests,
-  newTest,
-  newTestEmpty,
-} = require("./helpers/text.js");
+const { initialTest, newTest, newTestEmpty, paths } = require("./helpers/text.js");
 const {
   server,
   deleteApi,
   checkStatusCode,
   getApi,
   postApi,
-  compareProp,
   checkFormatRes,
   checkLength,
+  compareValues,
+  checkValuesToContain,
+  checkLengthPlus,
+  checkLengthMinus,
+  checkValuesNotToContain,
 } = require("./helpers/basic.js");
 
 beforeEach(async () => {
@@ -27,17 +26,16 @@ beforeEach(async () => {
 });
 
 describe("GET /test", () => {
-  const path = '/test';
   describe("true", () => {
-    test("GET /test - Verifica que la peticion se cumple correctamente", async () => {
-      const {status,text,header} = await getApi(path);
+    test("GET /test - true - Verifica que la peticion se cumple correctamente", async () => {
+      const { status, text, header } = await getApi(paths.get);
       const statusCode = 200;
       const expectedContent = "test";
       const expectedFormat = "html";
-      
+
       checkStatusCode(status, statusCode);
-      compareProp(text,expectedContent);
-      checkFormatRes(header,expectedFormat);
+      compareValues(text, expectedContent);
+      checkFormatRes(header, expectedFormat);
     });
   });
 });
@@ -45,11 +43,12 @@ describe("GET /test", () => {
 describe("GET /test/get", () => {
   const path = "/test/get";
   describe("true", () => {
-    test("GET /test/get - Verifica que la peticion se ejecuta correctamente", async () => {
-      const {status,body,header} = await getApi(path);
+    test("GET /test/get - true - Verifica que la peticion se ejecuta correctamente", async () => {
+      const { status, body, header } = await getApi(path);
       const statusCode = 200;
       // Obtengo las propiedades titles de mis test.1
-      const titles = body.map(test => test.title);
+      const titles = body.map((test) => test.title);
+      const valueToContain = initialTest[1].title;
       const expectedLength = initialTest.length;
       const expectedProp = initialTest[0].title;
       const comparedProp = body[0].title;
@@ -57,93 +56,113 @@ describe("GET /test/get", () => {
 
       checkStatusCode(status, statusCode);
       // Que contenga la cantidad de propiedades
-      checkLength(body,expectedLength);
+      checkLength(body, expectedLength);
       // Que la propiedad espesifica tenga el titulo
-      compareProp(comparedProp,expectedProp);
+      compareValues(comparedProp, expectedProp);
       // Que devuelva un json
-      checkFormatRes(header,expectedResFormat);
+      checkFormatRes(header, expectedResFormat);
       // Que alguna de las propiedades tenga el titulo
-      expect(titles).toContain(initialTest[1].title);
+      checkValuesToContain(titles, valueToContain);
     });
   });
 });
 
-describe.skip("POST /test/post", () => {
+describe("GET /test/get/:id", () => {
+  describe("true", () => {
+    test("GET /test/get/:id - true - Verificando que la peticion se cumple" , async () => {
+      const { body: tests } = await getApi(paths.getTest);
+      const espesificTest = tests[0];
+      const {body: test,status: testStatus,header: testHeader} = await getApi(`${paths.getTest}/${espesificTest._id}`);
+      const espesificTitle = test.title;
+      const compareTitle = initialTest[0].title; 
+      const statusCode = 200;
+      const resFormat = "json";
+
+      checkStatusCode(testStatus,statusCode);
+      compareValues(espesificTitle,compareTitle);
+      checkFormatRes(testHeader,resFormat);
+    });
+  })
+})
+
+describe("PUT /test/edit/:id", () => {
+  describe("true", () => {
+    test("PUT /test/edit/:id - Verifica si se edita el test espesifico", () => {
+
+    });
+  });
+});
+
+describe("POST /test/post", () => {
   const path = "/test/post";
   const getTestPath = "/test/get";
   describe("true", () => {
-    test("POST /test/post - Verifica el status code", async () => {
-      const res = await postApi(path, newTest);
+    test("POST /test/post - true - Verifica el si se creo el objeto", async () => {
+      const { header, status } = await postApi(path, newTest);
+      const { body } = await getApi(getTestPath);
       const statusCode = 201;
+      const titles = await body.map((test) => test.title);
+      const formatType = "json";
+      const addedLength = initialTest.length;
+      const checkProp = newTest.title;
 
-      checkStatusCode({ res, statusCode });
-    });
-    test("POST /test/post - Verifica el si se creo el objeto", async () => {
-      const firstRes = await postApi(path, newTest);
-      const res = await getApi(getTestPath);
-      const titles = await getTitlefromTests();
-
-      expect(JSON.stringify(firstRes.header)).toMatch(/application\/json/);
-      expect(res.body).toHaveLength(initialTest.length + 1);
-      expect(titles).toContain(newTest.title);
+      checkStatusCode(status, statusCode);
+      checkFormatRes(header, formatType);
+      checkLengthPlus(body, addedLength);
+      checkValuesToContain(titles, checkProp);
     });
   });
   describe("false", () => {
-    test("POST /test/post - Verifica que regrese el statuscode correcto", async () => {
-      const create = await postApi(path, newTestEmpty);
+    test("POST /test/post - false - Verifica que el objeto sin titulo no sea anadido", async () => {
+      const { status } = await postApi(path, newTestEmpty);
       const statusCode = 400;
+      const { body } = await getApi(getTestPath);
+      const expectedLength = initialTest.length;
 
-      checkStatusCode({ res: create, statusCode });
-    });
-    test("POST /test/post - Verifica que el objeto sin titulo no sea anadido", async () => {
-      const getPath = "/test/get";
-      await postApi(path, newTestEmpty);
-
-      const res = await getApi(getPath);
-      expect(res.body).toHaveLength(initialTest.length);
+      checkStatusCode(status, statusCode);
+      checkLength(body, expectedLength);
     });
   });
 });
 
-describe.skip("DELETE /test/delete/:id", () => {
+describe("DELETE /test/delete/:id", () => {
   const path = "/test/delete";
   const getTestPath = "/test/get";
   describe("true", () => {
-    test("DELETE /test/delete/:id - Verifica el status code", async () => {
+    test("DELETE /test/delete/:id - true - Verifica si un test puede eliminarse", async () => {
+      // Buscamos el test que quieremos eliminar
       const { body: tests } = await getApi(getTestPath);
       const testToDelete = tests[0];
-      const res = await deleteApi(path, testToDelete._id);
+      // Hacemos la peticion para eliminarlo
+      const { status } = await deleteApi(path, testToDelete._id);
+      // Verificamos si se elimino, haceindo otra peticion get
+      const { body } = await getApi(getTestPath);
+      const titles = await body.map((test) => test.title);
       const statusCode = 204;
+      const checkLength = initialTest.length;
+      const checkTitle = testToDelete.title;
 
-      checkStatusCode({ res, statusCode });
-    });
-    test("DELETE /test/delete/:id - Verifica si un test puede eliminarse", async () => {
-      // Crea una peticion para eliminar el test
-      const { body: tests } = await getApi(getTestPath);
-      const testToDelete = tests[0];
-      await deleteApi(path, testToDelete._id);
-
-      // Crea una peticion para verificar si se elimino
-      const titles = await getTitlefromTests();
-      const secondRes = await getApi(getTestPath);
+      checkStatusCode(status, statusCode);
       // Espera que el total de test sea menos uno, que es el test que se elimino.
-      expect(secondRes.body).toHaveLength(initialTest.length - 1);
+      checkLengthMinus(body, checkLength);
       // Se verifica si esta el titulo del test que se elimino.
-      expect(titles).not.toContain(testToDelete.title);
+      checkValuesNotToContain(titles, checkTitle);
     });
   });
   describe("false", () => {
     const notExistingTest = "1234";
-    test("DELETE /test/delete/:id - Cuando se trata de eliminar una nota que no existe", async () => {
+    test("DELETE /test/delete/:id - false - Cuando se trata de eliminar una nota que no existe", async () => {
       const statusCode = 400;
       // Creamos una peticion para borrar un test que no existe
-      const deleted = await deleteApi(path,notExistingTest);
-      // Se espera que regrese un status code de 400
-      checkStatusCode({res:deleted,statusCode });
+      const {status: deletedStatus} = await deleteApi(path, notExistingTest);
       // Creamos una peticion para ver los test
-      const res = await getApi(getTestPath);
+      const {body: getBody} = await getApi(getTestPath);
+      const checkInitialLength = initialTest.length;
+
+      // Se espera que regrese un status code de 400
+      checkStatusCode(deletedStatus, statusCode);
       // Y verificamos si tiene la misma cantidad de test del principio.
-      expect(res.body).toHaveLength(initialTest.length);
+      checkLength(getBody,checkInitialLength);
     });
   });
 });

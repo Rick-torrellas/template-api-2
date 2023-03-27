@@ -30,8 +30,8 @@ const deleteApi = async (path, element) => {
  * @param {*} path
  * @returns
  */
-const putApi = async (path) => {
-  return await api.put(path);
+const putApi = async (path,content) => {
+  return await api.put(path).send(content);
 };
 
 /**
@@ -65,26 +65,40 @@ const checkStatusCode = (resStatus, statusCode) => {
  * @param header El header de la respuesta `res.header`
  * @param format El formato esperado de la respuesta, posibles valores `json|html`
  */
-const checkFormatRes = (header,format) => {
-//TODO: verificar si format es json o html, en caso de que no tirar un error.    
+const checkFormatRes = (header, format) => {
+  //TODO: verificar si format es json o html, en caso de que no tirar un error.
   if (format === "json") {
-      expect(header["content-type"]).toMatch(/application\/json/);
-      return;
-    }
-      expect(header["content-type"]).toMatch(/text\/html/);
+    expect(header["content-type"]).toMatch(/application\/json/);
+    return;
+  }
+  expect(header["content-type"]).toMatch(/text\/html/);
 };
 
-//TODO: crea una funcion que veridique si existe un valor en un grupo de valores y crear uno que espero que no tenga
-//expect(titles).toContain(initialTest[1].title);
+/**
+ * Verifica si un valor espesifico se encuentra en un grupo de valores. Usa `expect(values).toContain(value)`
+ * @param {*} values Los valores que quieres comprobar
+ * @param {*} value El valor espesifico que quieres verificar
+ */
+const checkValuesToContain = (values,value) => {
+  expect(values).toContain(value);
+};
 
+/**
+ * Verifica si un valor espesifico no se encuentra en un grupo de valores. Usa `expect(values).not.toContain(value)`
+ * @param {*} values Los valores que quieres comprobar
+ * @param {*} value El valor espesifico que quieres verificar
+ */
+const checkValuesNotToContain = (values,value) => {
+  expect(values).not.toContain(value);
+};
 
 /**
  * Te permite comparar dos valores, usa `expect(prop1).toBe(prop2);`
  * @param {*} firstProp El primer valor a comparar
  * @param {*} secondProp El segundo valor a comparar
  */
-const compareProp = (firstProp, secondProp) => {
-  expect(firstProp).toBe(secondProp);
+const compareValues = (firstValue, secondValue) => {
+  expect(firstValue).toBe(secondValue);
 };
 
 /**
@@ -92,12 +106,29 @@ const compareProp = (firstProp, secondProp) => {
  * @param {*} object El objeto que quieres comparar su length, por lo general se usa `res.body`.
  * @param {*} length La length que deceas comprar. Por lo general se usa la longitud de la base de datos.
  */
-const checkLength = (object,length) => {
-    expect(object).toHaveLength(length);
-}
+const checkLength = (object, length) => {
+  expect(object).toHaveLength(length);
+};
 
-//TODO: una funcion que compare el length de la respuesta, con el de la base de datos y le sume 1, este es especial cuando se hace un post y crear una igual pero restando para los deletes.
-// expect(res.body).toHaveLength(initialTest.length + 1);
+/**
+ * Verifica la longitud de un objeto mas uno. Se usa para verificar si un nuevo elemento fue anadido. Usa `expect(object).toHaveLength(length + 1)`
+ * @param {*} object El objeto que quieres comparar su length, por lo general se usa `res.body`.
+ * @param {*} length La length que deceas comprar. Por lo general se usa la longitud de la base de datos.
+ */
+const checkLengthPlus = (object, length) => {
+  expect(object).toHaveLength(length + 1);
+};
+
+/**
+ * Verifica la longitud de un objeto menos uno. Se usa para verificar si un nuevo elemento fue eliminado. Usa `expect(object).toHaveLength(length - 1)`
+ * @param {*} object El objeto que quieres comparar su length, por lo general se usa `res.body`.
+ * @param {*} length La length que deceas comprar. Por lo general se usa la longitud de la base de datos.
+ */
+const checkLengthMinus = (object, length) => {
+  expect(object).toHaveLength(length - 1);
+};
+
+
 
 module.exports = {
   api,
@@ -107,7 +138,11 @@ module.exports = {
   putApi,
   deleteApi,
   checkStatusCode,
-  compareProp,
+  compareValues,
   checkFormatRes,
-  checkLength
+  checkLength,
+  checkValuesToContain,
+  checkValuesNotToContain,
+  checkLengthPlus,
+  checkLengthMinus
 };

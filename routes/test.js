@@ -19,5 +19,5 @@ router
         .put(edit);
 router
     .route("/delete/:id")
-        .delete(delete_)
+        .delete(delete_);
 module.exports = router;

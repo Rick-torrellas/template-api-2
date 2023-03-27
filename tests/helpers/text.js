@@ -23,8 +23,22 @@ const newTest = {
  */
 const newTestEmpty = {}
 
+const editedTest = {
+    title: 'Test Editado'
+}
+
+const paths = {
+    get: "/test",
+    getTest: '/test/get',
+    postTest: '/test/post',
+    putTest: '/test/edit',
+    deleteTest: '/test/delete'
+}
+
 module.exports = {
     initialTest,
     newTest,
-    newTestEmpty
+    newTestEmpty,
+    paths,
+    editedTest
 }

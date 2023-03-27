@@ -2,7 +2,6 @@ const Test = require("./../models/Test.js")
 
 const test = async (req,res) => {
     return res.status(200).send("test");
-    
 }
 const getAll = async (req,res) => {
     try {
@@ -35,10 +34,10 @@ const edit = async (req,res) => {
     try {
         const {id} = req.params;
         const content = req.body;
-        const testEdited = await Test.findByIdAndUpdate(id, content);
-        res.status(200).send(testEdited);
+        await Test.findByIdAndUpdate(id, content);
+        res.status(200);
     } catch (error) {
-        res.redirect(400,"/");   
+        res.status(400);   
     }
 }
 const delete_ = async (req,res) => {
