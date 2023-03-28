@@ -90,20 +90,26 @@ describe("PUT /test/edit/:id", () => {
   describe("true", () => {
     test("PUT /test/edit/:id - Verifica si se edita el test espesifico", async () => {
       // TODO: todo este proceso se podria transformar en una funcion.
-      const { body: tests } = await getApi(paths.getTest);
-      const espesificTest = tests[0];
-      const {body: testBody} = await getApi(`${paths.getTest}/${espesificTest._id}`);
-      const testToEditId = testBody._id;
-      const putPath = `${paths.putTest}/${testToEditId}`
-      await putApi(putPath,editedTest);
+      // Pedimos todos los test
+      const { body: bodyTests } = await getApi(paths.getTest);
+      // Buscamos uno en espesifico y buscamos su id.
+      const testToEditId = bodyTests[0]._id;
+      const putPath = `${paths.putTest}/${testToEditId}`;
+      // hacemos la peticion put con el id del test 0.
+      const {status: editStatus } = await putApi(putPath,editedTest);
+      // buscamos el titulo del test creado para verificarlo
+      const {body: [{title: testTitle}],body: Titles } = await getApi(paths.getTest);
+      const oldTestTitle = initialTest[0].title;
+      const newTestTitle = editedTest.title;
+      const checkTitles = Titles.map(titles => titles.title);
+      const expectedStatusCode = 204;
 
       // Verificar el status code del put
-
-      // Verificar qeu la respuesta sea un json.
-      // Verificar que el nuevo titulo no sea el viejo
+      checkStatusCode(editStatus, expectedStatusCode);
       // Verificar que el nuevo titulo sea el correcto
-      
-
+      compareValues(testTitle, newTestTitle);
+      //Verificar que no exista el viejo titulo en ninguna parte
+      checkValuesNotToContain(checkTitles,oldTestTitle);
     });
   });
 });
