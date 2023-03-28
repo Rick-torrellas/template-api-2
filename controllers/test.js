@@ -35,9 +35,9 @@ const edit = async (req,res) => {
         const {id} = req.params;
         const content = req.body;
         await Test.findByIdAndUpdate(id, content);
-        res.status(200);
+        res.sendStatus(204);
     } catch (error) {
-        res.status(400);   
+        res.sendStatus(400);   
     }
 }
 const delete_ = async (req,res) => {

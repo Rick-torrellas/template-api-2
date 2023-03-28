@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { describe } = require("node:test");
 const Test = require("./../models/Test.js");
-const { initialTest, newTest, newTestEmpty, paths } = require("./helpers/text.js");
+const { initialTest, newTest, newTestEmpty, paths, editedTest } = require("./helpers/test.js");
 const {
   server,
   deleteApi,
@@ -15,6 +15,7 @@ const {
   checkLengthPlus,
   checkLengthMinus,
   checkValuesNotToContain,
+  putApi,
 } = require("./helpers/basic.js");
 
 beforeEach(async () => {
@@ -87,7 +88,21 @@ describe("GET /test/get/:id", () => {
 
 describe("PUT /test/edit/:id", () => {
   describe("true", () => {
-    test("PUT /test/edit/:id - Verifica si se edita el test espesifico", () => {
+    test("PUT /test/edit/:id - Verifica si se edita el test espesifico", async () => {
+      // TODO: todo este proceso se podria transformar en una funcion.
+      const { body: tests } = await getApi(paths.getTest);
+      const espesificTest = tests[0];
+      const {body: testBody} = await getApi(`${paths.getTest}/${espesificTest._id}`);
+      const testToEditId = testBody._id;
+      const putPath = `${paths.putTest}/${testToEditId}`
+      await putApi(putPath,editedTest);
+
+      // Verificar el status code del put
+
+      // Verificar qeu la respuesta sea un json.
+      // Verificar que el nuevo titulo no sea el viejo
+      // Verificar que el nuevo titulo sea el correcto
+      
 
     });
   });

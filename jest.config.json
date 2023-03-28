@@ -1,8 +1,10 @@
 {
     "testPathIgnorePatterns": [
-        "routes",
-        "models",
-        "controllers"
+        "/routes/",
+        "/models/",
+        "/controllers/",
+        "/node_modules/",
+        "/helpers/"
       ],
       "verbose": true
 }
