@@ -19,6 +19,12 @@ Content-Type: application/json
     "title": "{{tittle}}"
 }
 
+### Create Test with no title
+POST {{url}}/test/post
+Content-Type: application/json
+
+{}
+
 ### Edit Test
 # @prompt id
 # @prompt title
@@ -28,6 +34,14 @@ Content-Type: application/json
 {
     "title": "{{title}}"
 }
+
+### Edit Test with empty object
+# @prompt id
+PUT {{url}}/test/edit/{{id}}
+Content-Type: application/json
+
+{}
+
 
 ### Delete Test
 # @prompt id

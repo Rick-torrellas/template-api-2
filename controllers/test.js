@@ -1,7 +1,8 @@
-const Test = require("./../models/Test.js")
+const Test = require("./../models/Test.js");
 
 const test = async (req,res) => {
-    return res.status(200).send("test");
+    const {test} = req
+    return res.status(200).send(test);
 }
 const getAll = async (req,res) => {
     try {
@@ -37,7 +38,7 @@ const edit = async (req,res) => {
         await Test.findByIdAndUpdate(id, content);
         res.sendStatus(204);
     } catch (error) {
-        res.sendStatus(400);   
+        res.status(400).send(error);   
     }
 }
 const delete_ = async (req,res) => {

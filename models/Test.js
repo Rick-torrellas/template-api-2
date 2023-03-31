@@ -1,7 +1,7 @@
 const {Schema, model} = require("mongoose");
 
 const TestSchema = new Schema({
-    title: {type: String, required: true},
+    title: {type: String},
 }, {
     timestamps: true
 })
