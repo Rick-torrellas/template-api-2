@@ -4,7 +4,7 @@
         "/models/",
         "/controllers/",
         "/node_modules/",
-        "/middlewares/".
+        "/middlewares/",
         "/helpers/"
       ],
       "verbose": true

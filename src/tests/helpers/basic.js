@@ -1,7 +1,7 @@
 const { cwd } = require("node:process");
 //TODO: crear una funcion que busque el archivo index.js, con cwd() o en src y en dis, si lo encuentra en dist, entonces usara este. NOTA: se puede usar fs-extra
 //TODO: tambien se me ocurre que este modulo puede tener un archivo de configuracion, tanto puede ser un archivo, como incluirse dentro del paqueete.json, que contenga una propiedad, que tenga la ubicacion del index.js.
-const index = `${cwd()}/index.js`;
+const index = `${cwd()}/src/index.js`;
 const { app, server } = require(index);
 const request = require("supertest");
 const api = request(app);

@@ -10,6 +10,17 @@ Get {{url}}/test/get
 # @prompt id
 GET {{url}}/test/get/{{id}}
 
+### Get me
+GET {{url}}/test/me
+x-access-token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MmM0NjJmZGRkZDIzY2Y5ZWRlMzQ2OCIsImlhdCI6MTY4MDYyMzE1MX0.v41Eo94mYNWqOsG338c8qNEq35cFwlcpbxqdswl8r9k 
+
+### Get me - Incorrect token
+GET {{url}}/test/me
+x-access-token: Bearer 
+
+### Get me - No Token
+GET {{url}}/test/me
+
 ### Create Test
 # @prompt tittle
 POST {{url}}/test/post
@@ -24,6 +35,26 @@ POST {{url}}/test/post
 Content-Type: application/json
 
 {}
+
+### Create User
+POST {{url}}/test/signup
+Content-Type: application/json
+
+{
+    "username": "pedro",
+    "email": "pedro@gmail.com",
+    "password": "123456"
+}
+
+### Login user
+POST {{url}}/test/signin
+Content-Type: application/json
+
+{
+    "email": "pedro@gmail.com",
+    "password": "123456"
+}
+
 
 ### Edit Test
 # @prompt id

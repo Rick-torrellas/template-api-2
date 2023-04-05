@@ -1,4 +1,6 @@
 const Test = require("./../models/Test.js");
+const UserTest = require("./../models/UserTest.js");
+const jwt = require("jsonwebtoken");
 
 const test = async (req,res) => {
     const {test} = req
@@ -50,11 +52,51 @@ const delete_ = async (req,res) => {
         res.redirect(400,"/");    
     }
 }
+const signin = async (req,res,next) => {
+    const {email,password} = req.body
+    const secretToken = req.app.get("secret token");
+    const user_test = await UserTest.findOne({email});
+    if (!user_test) {
+        return res.status(404).send("The email doesn't exists");
+    } 
+
+    const validatePassword = await user_test.validatePassword(password);
+    if (!validatePassword) return res.status(401).json({
+        auth: false,
+        token: null
+    });
+    const token = jwt.sign({id: user_test._id}, secretToken);
+    res.json(token);
+}
+
+const signup = async (req,res,next) => {
+    const user_test = new UserTest(req.body);
+    user_test.password = await user_test.encryptPassword(user_test.password);
+    const secretToken = req.app.get("secret token");
+     await user_test.save();
+    const token = jwt.sign({id: user_test._id}, secretToken);
+    res.json({auth: true, token});
+}
+
+const me = async (req,res) => {
+//TODO: Esto tiene que ser si o si un midleware, para reusarlo, el verificador de tokens
+
+    console.log(req.token)
+    const {token} = req
+    const user_test = await UserTest.findById(token.id);
+    if (!user_test) {
+        return res.sed(404).send("User not found");
+    }
+    res.json(user_test);
+}
 module.exports = {
     test,
     testPost,
     getOne,
     edit,
     getAll,
-    delete_
+    delete_,
+    signin,
+    signup,
+    me
 };

@@ -14,4 +14,5 @@ const server = app.listen(port,() => {
         //TODO: crear una funcion que registre en un archivo json, la ultima vez que se logeo, puede ser una funcion de los services.
     }
 });
+
 module.exports = {app,server};

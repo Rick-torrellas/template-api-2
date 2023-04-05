@@ -24,6 +24,8 @@ app.set('name', NAME);
 app.set('env', NODE_ENV);
 app.set('port', PORT);
 app.set('url', URL);
+app.set('secret token', process.env.SECRET_TOKEN);
+app.set('refresh secret token', process.env.REFRESH_SECRET_TOKEN);
 if (NODE_ENV == "production") {
     app.set('mongo url', MONGO_URL_PROD);
     app.set('database name', DATABASE_NAME_PROD);
