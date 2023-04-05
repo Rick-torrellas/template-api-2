@@ -1,5 +1,5 @@
 const {Schema, model} = require("mongoose");
-const bcrypt = require("bcryptjs");
+const { encryptPassword, validatePassword } = require("../services/encrypt");
 
 const UserTestSchema = new Schema({
     username: String,
@@ -9,14 +9,11 @@ const UserTestSchema = new Schema({
     timestamps: true
 })
 
-UserTestSchema.method('encryptPassword', async (password) => {
-//TODO: esto podria ser un servicio.
-    const salt = await bcrypt.genSalt(10);
-    return bcrypt.hash(password, salt);
-})
+UserTestSchema.method('encryptPassword', encryptPassword);
 
 UserTestSchema.methods.validatePassword = function(password) {
-    return bcrypt.compare(password, this.password);
+    const comparedPassword = this.password;
+    return validatePassword(password,comparedPassword)
 }
 
 UserTestSchema.set('toJSON', {
