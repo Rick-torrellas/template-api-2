@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const {test,testPost,getOne,edit,getAll,delete_, signup, me, signin} = require('./../controllers/test');
 const { validatePost,validatePut, checkEmailPassword,validateSignin, validateToken, validateSignup} = require("./../middlewares/validators/test.js");
-const {test: testMidleware} = require("./../middlewares/test.js");
+const {test: testMidleware,initTestObject} = require("./../middlewares/test.js");
 const {validate,notEmptyBody} = require("./../middlewares/validators");
 const {authenticateToken, checkSecretToken} = require('../middlewares/tokens.js');
+
+router.use(initTestObject);
 
 router
     .route("/")

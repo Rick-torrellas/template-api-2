@@ -1,0 +1,4 @@
+@url = http://localhost:3000/config
+
+### Show config of server
+GET {{url}}

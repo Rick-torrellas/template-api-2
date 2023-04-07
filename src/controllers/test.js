@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const test = async (req,res) => {
     const {test} = req
+    console.log(req.test);
     return res.status(200).send(test);
 }
 const getAll = async (req,res) => {
