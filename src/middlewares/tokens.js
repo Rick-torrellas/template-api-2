@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
-// const {showConfig: {auth: {secret_token}}} = require('./../services');
+const {config: {auth: {secret_token}}} = require('./../config.js');
 
-const secret_token = "nalga";
 
 function authenticateToken(req,res,next) {
     const token_ = req.headers['core-access-token'];

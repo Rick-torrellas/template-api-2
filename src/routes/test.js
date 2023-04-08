@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {test,testPost,getOne,edit,getAll,delete_, signup, me, signin} = require('./../controllers/test');
-const { validatePost,validatePut, checkEmailPassword,validateSignin, validateToken, validateSignup} = require("./../middlewares/validators/test.js");
+const { validatePost_,validatePut, checkEmailPassword,validateSignin, validateToken, validateSignup} = require("./../middlewares/validators/test.js");
 const {test: testMidleware,initTestObject} = require("./../middlewares/test.js");
 const {validate,notEmptyBody} = require("./../middlewares/validators");
 const {authenticateToken, checkSecretToken} = require('../middlewares/tokens.js');
@@ -11,9 +11,10 @@ router.use(initTestObject);
 router
     .route("/")
         .get(testMidleware, test)
+const post_ = [validatePost_,testPost];
 router
     .route("/post")
-        .post(validatePost(),validate,testPost);
+        .post(post_);
 router
     .route("/get")
         .get(getAll);

@@ -1,6 +1,7 @@
 
 const app = require("./routes.js");
-const {showConfig: {name , port , url , verbose, debug,node_env}, helloDebug, hello} = require('./services');
+const {config: {name , port , url , verbose, debug,node_env}} = require('./config.js');
+const {helloDebug, hello} = require('./services');
 require("./database/mongodb.js");
  //TODO: crear una funcion que registre en un archivo json, la ultima vez que se logeo, puede ser una funcion de los services.
 //TODO: configurar el favicon

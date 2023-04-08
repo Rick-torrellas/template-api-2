@@ -1,17 +1,24 @@
 const { body, header } = require("express-validator");
 const UserTest = require("./../../models/UserTest");
+const {validate,notEmptyBody} = require('./index.js');
+
 
 const validatePost = () => {
-  return body("title", "Error en el title")
+  return body("title")
     .exists()
     .withMessage("El titulo no existe")
+    .bail()
     .isString()
     .withMessage("El title no es un string")
+    .bail()
     .notEmpty()
     .withMessage("EL titulo esta vacio")
+    .bail()
     .trim()
     .escape();
 };
+const validatePost_ = [notEmptyBody,validatePost(),validate];
+
 
 const validatePut = () => {
   return body("title")
@@ -23,6 +30,7 @@ const validatePut = () => {
     .trim()
     .escape()
 };
+const validatePut_ = [notEmptyBody,validatePut(),validate];
 
 const validateSignin = () => {
   return [
@@ -39,6 +47,7 @@ const validateSignin = () => {
     .escape()
   ]
 }
+const validateSignin_ = [notEmptyBody,validateSignin(),validate];
 
 const validateSignup = () => {
   return [
@@ -100,7 +109,7 @@ return next();
 }
 
 module.exports = {
-  validatePost,
+  validatePost_,
   validatePut,
   checkEmailPassword,
   validateSignin,
