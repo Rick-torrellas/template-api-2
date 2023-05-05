@@ -6,6 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 //TODO: falta password mongo atlas o mongo local tambien.
+//TODO: faltan los roles de usuario.
 const NAME = process.env.NAME || "Template";
 const NODE_ENV = process.env.NODE_ENV || "development"; // development || production || test
 const DEBUG = process.env.DEBUG || false;
@@ -71,7 +72,6 @@ if (app.get("node env") == "production") {
   app.set("verbose", VERBOSE_PROD);
   app.set("morgan state", MORGAN_STATE_PROD);
   app.set("cors state", CORS_STATE_PROD);
-
   app.set("port", PORT_PROD);
   app.set("domain", DOMAIN_PROD);
   app.set("url", `${DOMAIN_PROD}:${PORT_PROD}`);

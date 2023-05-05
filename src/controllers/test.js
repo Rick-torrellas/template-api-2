@@ -3,11 +3,11 @@ const UserTest = require("./../models/UserTest.js");
 const jwt = require("jsonwebtoken");
 
 const {config: {auth: {secret_token}}} = require('./../config.js');
+const { generateToken, refreshToken } = require("../services/auth.js");
 
 
 const test = async (req,res) => {
     const {testsample} = req
-    console.log(req.test);
     return res.status(200).send(testsample);
 }
 const getAll = async (req,res) => {
@@ -58,17 +58,19 @@ const delete_ = async (req,res) => {
 }
 const signin = async (req,res) => {
     const {user} = req.test;
-    const token = jwt.sign({id: user._id}, secret_token);
-    
+    const userID = user._id;
+    const token = generateToken(userID);
+    // const refreshToken_ = refreshToken(userID);
+
     res.json({auth:true,token});
 }
 
 const signup = async (req,res) => {
     const user_test = new UserTest(req.body);
     user_test.password = await user_test.encryptPassword(user_test.password);
-//TODO: Crear un middleware que cree tokens
+    const userId = user_test._id;
      await user_test.save();
-    const token = jwt.sign({id: user_test._id}, secret_token);
+    const token = generateToken(userId);
 
     res.json({auth: true, token});
 }

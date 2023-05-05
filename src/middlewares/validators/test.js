@@ -1,5 +1,4 @@
 const { body, header } = require("express-validator");
-const UserTest = require("./../../models/UserTest");
 const {validate,notEmptyBody} = require('./index.js');
 
 
@@ -83,6 +82,8 @@ const validateSignup = () => {
   ]
 }
 
+const validateSignup_ = [notEmptyBody,validateSignup(),validate];
+
 const validateToken = () => {
   return header("core-access-token")
   .exists()
@@ -92,27 +93,14 @@ const validateToken = () => {
   .withMessage("No se entrego un JWT valido")
 }
 
-const checkEmailPassword = async (req,res,next) => {
-  const {email,password} = req.body
-  const user = await UserTest.findOne({email});
+const validateToken_ = [validateToken(),validate];
 
-  if (!user) {
-    return res.status(404).send("The email doesn't exists");
-} 
-const validatePassword = await user.validatePassword(password);
-if (!validatePassword) return res.status(401).json({
-  auth: false,
-  msg: "Invalid Password"
-});
-  req.test.user = user;
-return next();
-}
+
 
 module.exports = {
   validatePost_,
-  validatePut,
-  checkEmailPassword,
-  validateSignin,
-  validateToken,
-  validateSignup
+  validatePut_,
+  validateSignin_,
+  validateToken_,
+  validateSignup_
 };
